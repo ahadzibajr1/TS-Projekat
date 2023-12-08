@@ -40,25 +40,14 @@ public class ServicedeskApplication implements CommandLineRunner {
 	{
 		deleteExpiredTokens();
 		//cleanup();
-		//startingData();
 	}
 	private void cleanup() {
 		userRepository.deleteAll();
-		departmentRepository.deleteAll();
-		roleRepository.deleteAll();
 	}
 
 	private void deleteExpiredTokens() {
 		tokenRepository.deleteInvalidTokens();
 	}
 
-	private void startingData() {
-		Department depadmin = new Department("admindepartment");
-		departmentRepository.save(depadmin);
-		Role roladmin = new Role("admin");
-		roleRepository.save(roladmin);
-		User admin = new User("Admin","Admin","admin@admin.com", "adminpass", depadmin, roladmin);
-		userRepository.save(admin);
-	}
 
 }
