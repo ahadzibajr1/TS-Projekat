@@ -76,7 +76,7 @@ function ReportList() {
     return (
         <>
             <Header></Header>
-            {user.role == "sd_user" ? <UnauthorizedAccess></UnauthorizedAccess> :
+            {user.Role != "sd_agent" ? <UnauthorizedAccess></UnauthorizedAccess> :
                 <>
                     {rows ?
                         <Container

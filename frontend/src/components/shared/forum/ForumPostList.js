@@ -184,7 +184,7 @@ function ForumPostList() {
                   , marginBottom: 5
                 }}
               >Komentari na temu: <span style={{ color: "#f54242" }}>{forumTopic.topic}</span></h2>
-              {(status && (user.role === "sd_agent" || (user.email === forumTopic.createdBy.email))) ? <Button
+              {(status && (user.sub === forumTopic.createdBy.email)) ? <Button
 
                 style={{
                   backgroundColor: "#f54242",

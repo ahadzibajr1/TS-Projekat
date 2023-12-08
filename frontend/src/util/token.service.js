@@ -1,33 +1,40 @@
+import { jwtDecode } from "jwt-decode";
+
 class TokenService {
     getLocalRefreshToken() {
-      const user = JSON.parse(localStorage.getItem("user"));
-      return user?.refreshToken;
+      const refreshToken = localStorage.getItem("refresh-token");
+      return refreshToken;
     }
   
     getLocalAccessToken() {
-      const user = JSON.parse(localStorage.getItem("user"));
-      return user?.accessToken;
+      const accessToken = localStorage.getItem("access-token");
+      return accessToken;
     }
   
     updateLocalAccessToken(token) {
-      let user = JSON.parse(localStorage.getItem("user"));
-      console.log(token)
-      user.accessToken = token;
-      console.log(user)
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("access-token", token);
     }
   
     getUser() {
-      return JSON.parse(localStorage.getItem("user"));
+      var token = this.getLocalAccessToken();
+      if(token) {
+        try {
+          return jwtDecode(token);
+        } catch(e) {
+          return null;
+        }
+      }
+      return null;
     }
   
     setUser(user) {
-      console.log(JSON.stringify(user));
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("access-token", user.accessToken);
+      localStorage.setItem("refresh-token", user.refreshToken);
     }
   
     removeUser() {
-      localStorage.removeItem("user");
+      localStorage.removeItem("access-token");
+      localStorage.removeItem("refresh-token");
     }
   }
   

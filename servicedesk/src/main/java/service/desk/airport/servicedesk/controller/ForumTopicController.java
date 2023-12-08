@@ -44,21 +44,14 @@ public class ForumTopicController {
         return ResponseEntity.ok(forumTopicService.createForumTopic(forumTopicCreateRequest));
     }
 
-    /*@PostMapping("/create")
-    public String createForumTopic(@RequestBody String forumTopicCreateRequest,
-                                                               @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        System.out.println(forumTopicCreateRequest);
-        return "ok";
-    }*/
-
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteForumTopic(@PathVariable Integer id) {
-        return ResponseEntity.ok(forumTopicService.deleteForumTopic(id));
-    }
-
     @PostMapping("/close/{id}")
-    public ResponseEntity<ForumTopicResponse> closeForumTopic(@PathVariable Integer id) {
-        return ResponseEntity.ok(forumTopicService.closeForumTopic(id));
+    public ResponseEntity<ForumTopicResponse> closeForumTopic(@PathVariable Integer id, @RequestHeader(HttpHeaders.AUTHORIZATION) String token ) {
+        var email = jwtService.extractUsername(token.substring(7));
+        try {
+            return ResponseEntity.ok(forumTopicService.closeForumTopic(id, email));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
     }
 
 }

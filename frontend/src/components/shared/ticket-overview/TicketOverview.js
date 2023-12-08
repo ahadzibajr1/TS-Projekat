@@ -124,8 +124,8 @@ function TicketOverview() {
         </div>
       {id == null ? (
         <NotFound></NotFound>
-      ) : (user.role=="sd_user" && ticket!=null && ticket.createdBy.id!=user.id)
-      || (user.role=="sd_agent" && ticket!=null && ticket.assignedTo!=null && ticket.assignedTo.id!=user.id) ?(
+      ) : (user.Role=="sd_user" && ticket!=null && ticket.createdBy.id!=user.id)
+      || (user.Role=="sd_agent" && ticket!=null && ticket.assignedTo!=null && ticket.assignedTo.id!=user.id) ?(
         <UnauthorizedAccess></UnauthorizedAccess>
       ) : (
         <>

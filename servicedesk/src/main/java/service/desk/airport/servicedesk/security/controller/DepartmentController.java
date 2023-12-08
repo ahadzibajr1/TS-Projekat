@@ -13,6 +13,7 @@ public class DepartmentController {
     @Autowired
     private DepartmentRepository departmentRepository;
 
+    /*
     @PostMapping(path="/add")
     public @ResponseBody
     String addNewDepartment (@RequestParam String name) {
@@ -25,4 +26,6 @@ public class DepartmentController {
     public @ResponseBody Iterable<Department> getAllDepartments() {
         return departmentRepository.findAll();
     }
+
+     */
 }

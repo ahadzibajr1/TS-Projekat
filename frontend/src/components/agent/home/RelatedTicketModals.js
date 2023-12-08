@@ -102,8 +102,8 @@ export default function RelatedTicketsBind({ addRelatedTicket,open, setOpen, cur
     })*/
 
     api.get("/ticket/code/" + code).then(x => {
-      setItem(x.data);
-      if(x.data!=null)
+      if(x.status == 200)
+        setItem(x.data);
         setRelatedId(x.data.id)
       setCircle(0)
     })

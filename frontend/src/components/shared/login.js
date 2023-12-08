@@ -19,7 +19,6 @@ import IconButton from "@mui/material/IconButton";
 import {useLocalState} from "../../util/useLocalState";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef } from "react";
-import bcrypt from 'bcryptjs';
 
 import AuthService from "../../util/auth.service"
 
@@ -62,7 +61,7 @@ const Login = () => {
     document.body.style.cursor='wait';
     const reqBody = {
       email: email,
-      password: hash(password)
+      password: password
     }
 
     AuthService.login(email,password).then(
@@ -79,18 +78,7 @@ const Login = () => {
 
   };
 
-  // The higher the saltRounds, the more secure but slower the hashing process
-  const saltRounds = 10;
-
-  const hash = (plainTextPassword) => {
-    bcrypt.hash(plainTextPassword, saltRounds, (err, hash) => {
-      if (err) {
-        console.error('Error hashing password:', err);
-      } else {
-        return hash;
-            }
-    });
-  }
+  
 
   return (
     <div>

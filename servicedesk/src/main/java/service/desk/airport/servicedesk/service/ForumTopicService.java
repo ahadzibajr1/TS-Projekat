@@ -2,6 +2,7 @@ package service.desk.airport.servicedesk.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import service.desk.airport.servicedesk.dao.ForumTopicRepository;
 import service.desk.airport.servicedesk.dto.forumtopic.ForumTopicCreateRequest;
 import service.desk.airport.servicedesk.dto.forumtopic.ForumTopicResponse;
@@ -9,6 +10,7 @@ import service.desk.airport.servicedesk.entity.ForumTopic;
 import service.desk.airport.servicedesk.security.dao.UserRepository;
 import service.desk.airport.servicedesk.security.entity.User;
 
+import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
@@ -42,8 +44,11 @@ public class ForumTopicService {
         return new ForumTopicResponse(forumTopic);
     }
 
-    public ForumTopicResponse closeForumTopic(Integer id) {
+    public ForumTopicResponse closeForumTopic(Integer id, String email) {
         var temp = forumTopicRepository.findById(id).orElseThrow();
+        if(!email.equals(temp.getCreatedBy().getEmail())) {
+            throw new InvalidParameterException();
+        }
         temp.setOpen(false);
         return new ForumTopicResponse(forumTopicRepository.save(temp));
     }

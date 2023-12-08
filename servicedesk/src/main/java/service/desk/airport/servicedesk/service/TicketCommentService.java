@@ -9,7 +9,9 @@ import service.desk.airport.servicedesk.dto.ticketcomment.TicketCommentResponse;
 import service.desk.airport.servicedesk.entity.TicketComment;
 import service.desk.airport.servicedesk.security.dao.UserRepository;
 import service.desk.airport.servicedesk.security.dto.UserResponse;
+import service.desk.airport.servicedesk.security.entity.User;
 
+import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +27,13 @@ public class TicketCommentService {
     @Autowired
     TicketRepository ticketRepository;
 
-    public List<TicketCommentResponse> getTicketComments(Integer ticketId) {
+    public List<TicketCommentResponse> getTicketComments(Integer ticketId, String email) {
+        var user = userRepository.findByEmail(email).orElseThrow();
+        var ticket = ticketRepository.findById(ticketId).orElseThrow();
+        if(!ticket.getCreatedBy().getEmail().equals(user.getEmail()) &&
+                !ticket.getAssignedTo().getEmail().equals(user.getEmail())) {
+            throw new InvalidParameterException();
+        }
        return ticketCommentRepository
                .findTicketCommentsByTicketId(ticketId)
                .stream()
@@ -36,6 +44,10 @@ public class TicketCommentService {
     public TicketCommentResponse createTicketComment(TicketCommentCreateRequest request) {
         var user = userRepository.findByEmail(request.getUserEmail()).orElseThrow();
         var ticket = ticketRepository.findById(request.getTicketId()).orElseThrow();
+
+        if(!ticket.getCreatedBy().getEmail().equals(user.getEmail())  && !ticket.getAssignedTo().getEmail().equals(user.getEmail())) {
+            throw new InvalidParameterException();
+        }
 
         var ticketComment = new TicketComment();
         ticketComment.setComment(request.getComment());

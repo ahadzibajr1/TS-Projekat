@@ -285,7 +285,7 @@ function TicketCard({t}) {
       >
         {priority(t)}
       </span>
-      {t.status=="ACTIVE" && user.role=="sd_agent" ?<Button
+      {t.status=="ACTIVE" && user.Role=="sd_agent" ?<Button
                   style={{
                     clear:'both',
                     float:"right",

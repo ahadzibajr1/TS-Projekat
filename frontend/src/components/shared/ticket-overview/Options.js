@@ -257,7 +257,7 @@ function Options({ relatedTickets,setRelatedTickets,ticket,setTicket,setTicketCo
       <ButtonGroup style={{ float: "right", margin: 0 }}>
       
       {//If the current user has created this ticket, show user options
-      user.role == "sd_user" && ticket.createdBy.id===user.id ? 
+      user.Role == "sd_user" && ticket.createdBy.id===user.id ? 
         (userOptions())
       //If the current user is an agent who is assigned to this ticket
       //show agent options
@@ -266,7 +266,7 @@ function Options({ relatedTickets,setRelatedTickets,ticket,setTicket,setTicketCo
       ) 
       //If ticket hasn't been assigned to anyone, and the current user is an agent
       //show an option to assign the ticket to the current user
-      : user.role="sd_agent" && ticket.assignedTo==null ? (
+      : user.Role="sd_agent" && ticket.assignedTo==null ? (
         <Button
                   style={{
                 

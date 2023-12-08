@@ -17,7 +17,6 @@ import CheckTwoToneIcon from '@mui/icons-material/CheckTwoTone';
 import { render } from 'react-dom';
 
 function ForumList() {
-    const user = authService.getCurrentUser();
     const [rows, setRows] = useState();
     const navigate = useNavigate();
 

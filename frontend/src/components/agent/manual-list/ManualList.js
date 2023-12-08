@@ -193,7 +193,7 @@ function ManualList() {
                                     }}
                                 >Priručnici</h2>
                             </Box>
-                            {user.role == "sd_user" ? <></> :
+                            {user.Role != "sd_agent" ? <></> :
                             <>
                             <Box sx={{ display:"flex",
                                         justifyContent:"flex-end",
@@ -280,7 +280,7 @@ function ManualList() {
                                     }
                                   }}
                                 rows={rows}
-                                columns={user.role == "sd_user" ? userColumns : columns}
+                                columns={user.Role == "sd_user" ? userColumns : columns}
                                 onRowClick={(r,event) => { 
                                     if (!event.ignore) {
                                         navigate("/manual?id=" + r.row.id)

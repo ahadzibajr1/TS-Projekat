@@ -19,6 +19,7 @@ import service.desk.airport.servicedesk.enums.TicketTag;
 import service.desk.airport.servicedesk.security.dao.UserRepository;
 import service.desk.airport.servicedesk.security.entity.User;
 
+import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,11 +31,21 @@ public class TicketService {
     @Autowired
     UserRepository userRepository;
 
-    public Ticket getTicket(Integer ticketId) {
-        return ticketRepository.findById(ticketId).orElseThrow();
+    public Ticket getTicket(Integer ticketId, String email) {
+        var user = userRepository.findByEmail(email).orElseThrow();
+        var ticket = ticketRepository.findById(ticketId).orElseThrow();
+        if(!user.getRole().getName().equals("sd_agent") && !ticket.getCreatedBy().getEmail().equals(user.getEmail()))
+            throw new InvalidParameterException();
+
+        return ticket;
     }
-    public Ticket getTicketByCode(String code) {
-        return ticketRepository.findByCode(code);
+    public Ticket getTicketByCode(String code, String email) {
+        var user = userRepository.findByEmail(email).orElseThrow();
+        var ticket = ticketRepository.findByCode(code);
+        if(!user.getRole().getName().equals("sd_agent"))
+            throw new InvalidParameterException();
+
+        return ticket;
     }
     public TicketResponse createTicket(TicketCreateRequest request) {
         var user = userRepository.findByEmail(request.getUserEmail()).orElseThrow();
@@ -84,7 +95,7 @@ public class TicketService {
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow();
 
         //Someone has already taken the ticket
-        if(ticket.getStatus().equals(TicketStatus.ASSIGNED))
+        if(!ticket.getStatus().equals(TicketStatus.ACTIVE))
             return null;
 
         ticket.setStatus(TicketStatus.ASSIGNED);
@@ -94,17 +105,17 @@ public class TicketService {
         return  new TicketResponse(ticket);
     }
 
-    public TicketResponse verifyTicket( Integer ticketId) {
+    public TicketResponse verifyTicket( Integer ticketId, String email) {
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow();
-        if(ticket.getStatus() != TicketStatus.ASSIGNED)
+        if(ticket.getStatus() != TicketStatus.ASSIGNED || !ticket.getCreatedBy().getEmail().equals(email))
             return null;
         ticket.setStatus(TicketStatus.VERIFIED);
         ticketRepository.save(ticket);
         return  new TicketResponse(ticket);
     }
-    public TicketResponse closeTicket( Integer ticketId) {
+    public TicketResponse closeTicket( Integer ticketId, String email) {
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow();
-        if (ticket.getStatus() != TicketStatus.VERIFIED){
+        if (ticket.getStatus() != TicketStatus.VERIFIED || !ticket.getAssignedTo().getEmail().equals(email)){
             var exception = new EntityNotFoundException("Closing a ticket is only possible if its status is VERIFIED");
             throw exception;
         }
@@ -113,9 +124,9 @@ public class TicketService {
         return  new TicketResponse(ticket);
     }
 
-    public String deleteTicket(Integer ticketId) {
+    public String deleteTicket(Integer ticketId, String email) {
         var ticket = ticketRepository.findById(ticketId).orElseThrow();
-        if(ticket.getStatus().equals(TicketStatus.ACTIVE)) {
+        if(ticket.getStatus().equals(TicketStatus.ACTIVE) && ticket.getCreatedBy().getEmail().equals(email)) {
             ticketRepository.deleteById(ticketId);
             return "Uspješno obrisano";
         }
@@ -184,9 +195,9 @@ public class TicketService {
                 .collect(Collectors.toList());
     }
 
-    public TicketResponse assignTicketToUser(Integer ticketId, Integer userId) {
+    public TicketResponse assignTicketToUser(Integer ticketId, Integer userId, String email) {
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow();
-        if(ticket.getStatus().equals(TicketStatus.CLOSED) || ticket.getStatus().equals(TicketStatus.VERIFIED))
+        if(ticket.getStatus().equals(TicketStatus.CLOSED) || ticket.getStatus().equals(TicketStatus.VERIFIED) || !ticket.getAssignedTo().getEmail().equals(email))
             return null;
         ticket.setStatus(TicketStatus.ASSIGNED);
         var user = userRepository.findById(userId).orElseThrow();
@@ -198,12 +209,16 @@ public class TicketService {
     public TicketResponse assignTicketToUserWithDeparment(Integer ticketId, Integer departmentId,String agentEmail){
         var agentRequest = userRepository.findByEmail(agentEmail).orElseThrow();
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow();
-        if(ticket.getStatus().equals(TicketStatus.CLOSED) || ticket.getStatus().equals(TicketStatus.VERIFIED))
+        if(ticket.getStatus().equals(TicketStatus.CLOSED) || ticket.getStatus().equals(TicketStatus.VERIFIED) || !ticket.getAssignedTo().getEmail().equals(agentEmail))
             return null;
         ticket.setStatus(TicketStatus.ASSIGNED);
 
         var user = userRepository.findUserInSpecificDepartment(departmentId,agentRequest.getId());
 
+        if(user == null) {
+            throw new EntityNotFoundException();
+
+        }
 
         ticket.setAssignedTo(user);
         ticketRepository.save(ticket);

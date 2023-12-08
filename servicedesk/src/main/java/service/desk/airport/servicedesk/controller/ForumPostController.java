@@ -43,9 +43,5 @@ public class ForumPostController {
 
         return ResponseEntity.ok(forumPostService.createForumPost(forumPostCreateRequest));
     }
-
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteForumPost(@PathVariable Integer id) {
-        return ResponseEntity.ok(forumPostService.deleteForumPost(id));
-    }
+    
 }

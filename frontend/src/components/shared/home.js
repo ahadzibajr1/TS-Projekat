@@ -7,18 +7,19 @@ import { useNavigate } from "react-router-dom";
 import Header from "./header"
 import AgentHomeContent from "../agent/home/AgentHomeContent";
 import UserHomeContent from "../user/home/UserHomeContent";
+import UnauthorizedAccess from "../shared/UnauthorizedAccess";
 
 const Home= () =>{
     
-    
-    const navigate = useNavigate();
     const user = authService.getCurrentUser();
 
    
     return (
         <div>
           <Header></Header>
-          {user.role == "sd_agent" ? <AgentHomeContent></AgentHomeContent> : <UserHomeContent></UserHomeContent>}
+          {user.Role == "sd_agent" ? <AgentHomeContent></AgentHomeContent> 
+          : user.Role == "sd_user" ? <UserHomeContent></UserHomeContent>
+          : <UnauthorizedAccess/>}
         </div>
     )
 }

@@ -121,7 +121,7 @@ function ManualCreateEdit() {
             {toast.msg}
           </Alert>
         </Snackbar>
-        {user.role=="sd_user" ?  <UnauthorizedAccess></UnauthorizedAccess> :
+        {user.Role!="sd_agent" ?  <UnauthorizedAccess></UnauthorizedAccess> :
         idInvalid? 
         <NotFound></NotFound>
         : manual?

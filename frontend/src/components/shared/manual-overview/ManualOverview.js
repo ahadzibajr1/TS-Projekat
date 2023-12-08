@@ -71,7 +71,7 @@ function ManualOverview() {
             <Container
               sx={{ mt: 2 }}
               style={{ backgroundColor: "#F5F5F5", padding: 10, width: "90%", fontFamily: "Yantramanav", clear: left }}>
-                 {user.role == "sd_user" ? <></> :
+                 {user.Role == "sd_agent" ?
                  <>
                 <div style={{float:"right"}}>
 
@@ -108,7 +108,7 @@ function ManualOverview() {
                 </div>
                 <br></br>
                 </>
-              }
+              : <></>}
               <div style={{ color: "#00101F", paddingLeft: 10, fontSize: "36px", fontWeight: "bold" }}>{manual.title}</div>
               <hr style={{ backgroundColor: "#00101F" }}></hr>
               <div contentEditable='false' dangerouslySetInnerHTML={{ __html: manual.content }}></div>

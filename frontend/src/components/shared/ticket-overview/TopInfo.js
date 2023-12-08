@@ -109,7 +109,7 @@ function TopInfo({ticket,setTicket,setTicketComments,ticketComments}) {
       const user = authService.getCurrentUser();
     
       const showRelatedTickets = () => {
-        if(user.role=="sd_user")
+        if(user.Role=="sd_user")
         return;
         if(ticket.relatedTicketIds.length>0)
           api.post("/ticket/idarray",{ids:ticket.relatedTicketIds}).then((res)=> {

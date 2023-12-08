@@ -9,7 +9,7 @@ const TicketList= () =>{
    
     return (
         <div>
-          {user.role == "sd_agent" ? <AgentTicketList></AgentTicketList> : <UserTicketList></UserTicketList>}
+          {user.Role == "sd_agent" ? <AgentTicketList></AgentTicketList> : <UserTicketList></UserTicketList>}
         </div>
     )
 }

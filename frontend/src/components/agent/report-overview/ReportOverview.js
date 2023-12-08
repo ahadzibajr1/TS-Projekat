@@ -16,6 +16,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import jsPDF from 'jspdf';
 import { useRef } from 'react';
 import html2canvas from 'html2canvas';
+import authService from '../../../util/auth.service';
+import UnauthorizedAccess from '../../shared/UnauthorizedAccess';
 
 function ReportOverview() {
   const [report, setReport] = useState();
@@ -23,6 +25,7 @@ function ReportOverview() {
   const searchParams = new URLSearchParams(location.search);
   const id = searchParams.get("id");
   const navigate = useNavigate();
+  const user = authService.getCurrentUser();
   
   
 
@@ -71,6 +74,8 @@ function ReportOverview() {
   return (
     <>
       <Header></Header>
+      {user.Role != "sd_agent" ? <UnauthorizedAccess></UnauthorizedAccess> :
+      <>
       <div style={{marginLeft:"30px",width:"1200px", marginTop:"30px",display:"flex",justifyContent:"space-between"}}>
       <Stack spacing={2}>
       <Breadcrumbs
@@ -405,6 +410,8 @@ function ReportOverview() {
         >
           <CircularProgress color="inherit" />
         </Backdrop>}</div>
+        </>
+      }
     </>
   )
 }

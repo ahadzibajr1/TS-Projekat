@@ -12,6 +12,7 @@ public class RoleController {
     @Autowired
     private RoleRepository roleRepository;
 
+    /*
     @PostMapping(path="/add")
     public @ResponseBody
     String addNewRole (@RequestParam String name) {
@@ -23,5 +24,5 @@ public class RoleController {
     @GetMapping(path="/all")
     public @ResponseBody Iterable<Role> getAllRoles() {
         return roleRepository.findAll();
-    }
+    }*/
 }

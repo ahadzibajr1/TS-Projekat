@@ -9,7 +9,7 @@ function CreateTicket() {
   return (
     <div>
     <Header></Header>
-    {user.role == "sd_user" ? <Form></Form> : <UnauthorizedAccess></UnauthorizedAccess>}
+    {user.Role == "sd_user" ? <Form></Form> : <UnauthorizedAccess></UnauthorizedAccess>}
     </div>
   )
 }

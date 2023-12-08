@@ -2,8 +2,8 @@ import "./App.css";
 import Login from "./components/shared/login";
 import Home from "./components/shared/home";
 import PrivateRoute from "./components/shared/privateroute";
-import { Routes, Route } from "react-router-dom";
-import { useState } from "react";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import CreateTicket from "./components/user/ticket-create/CreateTicket";
 import TicketOverview from "./components/shared/ticket-overview/TicketOverview";
 import NotFound from "./components/shared/NotFound";
@@ -17,8 +17,28 @@ import ManualList from "./components/agent/manual-list/ManualList";
 import ForumList from "./components/shared/forum/ForumList";
 import ForumCreateEdit from "./components/shared/forum/ForumCreate";
 import ForumPostList from "./components/shared/forum/ForumPostList";
+import authService from "./util/auth.service";
 
 function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const validateToken = async()=> {
+    var valid = await authService.validateToken();
+    console.log(valid)
+    if(!valid) {
+      console.log("invalid token")
+      navigate("/login");
+    }
+  }
+
+  useEffect(() => {
+    if(location.pathname != "/login") {
+      validateToken();
+    }
+  }, [location]);  
+
+
   return (
     <div>
       <Routes>

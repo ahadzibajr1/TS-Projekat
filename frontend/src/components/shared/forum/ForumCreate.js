@@ -71,7 +71,6 @@ function ForumCreateEdit() {
 
   }
 
-  const user = authService.getCurrentUser();
   return (
     <div>
       <Header></Header>

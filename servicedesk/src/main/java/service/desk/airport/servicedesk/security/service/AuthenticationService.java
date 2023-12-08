@@ -101,6 +101,8 @@ public class AuthenticationService {
         var role = user.getRole();
         Map<String,Object> roleMap= new HashMap<>();
         roleMap.put("Role",role.getName());
+        roleMap.put("id",user.getId());
+        roleMap.put("firstName",user.getFirstname());
         var jwtToken = jwtService.generateToken(roleMap,user);
         var refreshToken = jwtService.generateRefreshToken(roleMap,user);
         revokeAllUserTokens(user);
@@ -135,6 +137,8 @@ public class AuthenticationService {
             var role = userDetails.getRole();
             Map<String,Object> roleMap= new HashMap<>();
             roleMap.put("Role",role.getName());
+            roleMap.put("id",userDetails.getId());
+            roleMap.put("firstName",userDetails.getFirstname());
             if(jwtService.isTokenValid(refreshToken,userDetails)) {
                 var accessToken = jwtService.generateToken(roleMap,userDetails);
                 revokeAllUserTokens(userDetails);
@@ -150,7 +154,8 @@ public class AuthenticationService {
     public boolean compareHash(String providedPassword, String email) {
         UserDetails userDetails = userRepository.findByEmail(email).orElseThrow();
 
-        return providedPassword.equals(userDetails.getPassword());
+
+        return passwordEncoder.matches(providedPassword,userDetails.getPassword());
     }
 
     public String getHash(String password) {

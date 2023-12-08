@@ -153,7 +153,7 @@ function ReportCreate() {
                 </Alert>
             </Snackbar>
             <Header></Header>
-            {user.role == "sd_user" ? <UnauthorizedAccess></UnauthorizedAccess> :
+            {user.Role != "sd_agent" ? <UnauthorizedAccess></UnauthorizedAccess> :
                 ticket ? <Container
                     style={{ backgroundColor: "#F5F5F5", width: "80%", padding: 0 }}
                 >

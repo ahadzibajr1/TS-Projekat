@@ -38,6 +38,7 @@ public class AuthController {
         this.authenticationService = authenticationService;
     }
 
+    /*
     @GetMapping("/user")
     public ResponseEntity<User> getUserByEmail(@RequestParam String email) {
         var user = authenticationService.getUserByEmail(email);
@@ -45,13 +46,8 @@ public class AuthController {
             return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
 
         return  ResponseEntity.ok(user);
-    }
+    }*/
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest registerRequest) {
-
-       return ResponseEntity.ok(authenticationService.register(registerRequest));
-    }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthCredentials credentials) {
@@ -75,7 +71,9 @@ public class AuthController {
         if(jwtService.validateToken(token)) {
             return ResponseEntity.ok("Token valid");
         } else {
-            return (ResponseEntity<String>) ResponseEntity.badRequest();
+            return (ResponseEntity<String>) ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body("You shall not pass!");
         }
     }
 

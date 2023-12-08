@@ -16,6 +16,7 @@ import service.desk.airport.servicedesk.dto.ticket.TicketResponse;
 import service.desk.airport.servicedesk.security.service.JwtService;
 import service.desk.airport.servicedesk.service.TicketService;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -48,28 +49,40 @@ public class TicketController {
     TicketRepository ticketRepository;
 
     @GetMapping("/{id}")
-    public ResponseEntity<TicketResponse> getTicketById(@PathVariable("id")Integer ticketId) {
+    public ResponseEntity<TicketResponse> getTicketById(@PathVariable("id")Integer ticketId, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         try {
-            return ResponseEntity.ok(new TicketResponse(ticketService.getTicket(ticketId),false));
-        } catch(Exception e) {
+            var email = jwtService.extractUsername(token.substring(7));
+            return ResponseEntity.ok(new TicketResponse(ticketService.getTicket(ticketId,email),false));
+        }catch (InvalidParameterException e) {
+            return  ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+        catch(Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @GetMapping("/code/{code}")
-    public ResponseEntity<TicketResponse> getTicketByCode(@PathVariable("code")String ticketCode) {
+    public ResponseEntity<TicketResponse> getTicketByCode(@PathVariable("code")String ticketCode, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         try {
-            return ResponseEntity.ok(new TicketResponse(ticketService.getTicketByCode(ticketCode),false));
+            var email = jwtService.extractUsername(token.substring(7));
+
+            return ResponseEntity.ok(new TicketResponse(ticketService.getTicketByCode(ticketCode,email),false));
+        } catch (InvalidParameterException e) {
+            return  ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         } catch(Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @GetMapping("/related/{id}")
-    public ResponseEntity<TicketResponse> getTicketWithRelatedById(@PathVariable("id")Integer ticketId) {
+    public ResponseEntity<TicketResponse> getTicketWithRelatedById(@PathVariable("id")Integer ticketId,@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         try {
-            return ResponseEntity.ok(new TicketResponse(ticketService.getTicket(ticketId), false));
-        } catch(Exception e) {
+            var email = jwtService.extractUsername(token.substring(7));
+            return ResponseEntity.ok(new TicketResponse(ticketService.getTicket(ticketId, email), false));
+        }catch (InvalidParameterException e) {
+            return  ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+        catch(Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -155,7 +168,8 @@ public class TicketController {
             @PathVariable("id") Integer ticketId,
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         try {
-            var res = ticketService.verifyTicket(ticketId);
+            var userEmail = jwtService.extractUsername(token.substring(7));
+            var res = ticketService.verifyTicket(ticketId, userEmail);
             if(res==null)
                 return new ResponseEntity<TicketResponse>((TicketResponse) null, HttpStatusCode.valueOf(400));
 
@@ -171,7 +185,8 @@ public class TicketController {
             @PathVariable("id") Integer ticketId,
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token
     ) {
-        var res = ticketService.deleteTicket(ticketId);
+        var userEmail = jwtService.extractUsername(token.substring(7));
+        var res = ticketService.deleteTicket(ticketId,userEmail);
         if(res==null)
             return new ResponseEntity<String>("Nije moguće obrisati ticket", HttpStatusCode.valueOf(400));
 
@@ -181,12 +196,15 @@ public class TicketController {
     @PreAuthorize("hasRole('sd_agent')")
     @PostMapping("/close/{id}")
     public ResponseEntity<TicketResponse> closeTicket(
-            @PathVariable("id") Integer ticketId) {
+            @PathVariable("id") Integer ticketId,@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
 
-            return ResponseEntity.ok(ticketService.closeTicket(ticketId));
+        var userEmail = jwtService.extractUsername(token.substring(7));
+
+        return ResponseEntity.ok(ticketService.closeTicket(ticketId, userEmail));
 
     }
 
+    /*
     @PreAuthorize("hasRole('sd_agent')")
     @GetMapping("/all")
     public ResponseEntity<List<TicketResponse>> getAllTickets(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) { //helper route, probably delete later
@@ -209,14 +227,16 @@ public class TicketController {
         } catch (Exception e) {
             return new ResponseEntity<List<TicketResponse>>(HttpStatus.BAD_REQUEST);
         }
-    }
+    }*/
 
     @PostMapping("/related/{ticketid}/{relatedticketid}")
     public ResponseEntity<TicketResponse> addRelatedTicketTo(
             @PathVariable("ticketid") Integer ticketId,
-            @PathVariable("relatedticketid") Integer relatedTicketId) {
+            @PathVariable("relatedticketid") Integer relatedTicketId,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         try{
-            var ticket = ticketService.getTicket((ticketId));
+            var email = jwtService.extractUsername(token.substring(7));
+            var ticket = ticketService.getTicket(ticketId,email);
 
 
             for(var t : ticket.getRelatedTickets()) {
@@ -225,7 +245,7 @@ public class TicketController {
                 }
             }
 
-            var relatedTicket = ticketService.getTicket((relatedTicketId));
+            var relatedTicket = ticketService.getTicket(relatedTicketId,email);
 
             if(Objects.equals(ticket.getId(), relatedTicket.getId())) {
                 return new ResponseEntity<TicketResponse>(HttpStatus.BAD_REQUEST);
@@ -242,6 +262,7 @@ public class TicketController {
         }
     }
 
+    /*
     @PostMapping("/related/wipe/{ticketid}")
     public ResponseEntity<TicketResponse> wipeRelatedTickets(@PathVariable Integer ticketid) {
         var ticket = ticketService.getTicket(ticketid);
@@ -269,7 +290,7 @@ public class TicketController {
         }
 
     }
-
+*/
     @PreAuthorize("hasRole('sd_agent')")
     @GetMapping("/urgent")
     public ResponseEntity<List<TicketResponse>> getUrgentActiveTickets() {
@@ -278,10 +299,10 @@ public class TicketController {
 
     @PreAuthorize("hasRole('sd_agent')")
     @PostMapping("/assign/{ticket_id}/{user_id}")
-    public ResponseEntity<TicketResponse> assignTicketToUser(@PathVariable Integer ticket_id, @PathVariable Integer user_id) {
+    public ResponseEntity<TicketResponse> assignTicketToUser(@PathVariable Integer ticket_id, @PathVariable Integer user_id,@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         try {
-
-            var res = ticketService.assignTicketToUser(ticket_id, user_id);
+            var email = jwtService.extractUsername(token.substring(7));
+            var res = ticketService.assignTicketToUser(ticket_id, user_id,email);
             //Ticket is already VERIFIED or CLOSED
             if(res==null)
                 return new ResponseEntity<TicketResponse>((TicketResponse) null, HttpStatusCode.valueOf(400));
@@ -302,15 +323,14 @@ public class TicketController {
             //Ticket is already VERIFIED or CLOSED
             if(res==null)
                 return new ResponseEntity<TicketResponse>((TicketResponse) null, HttpStatusCode.valueOf(400));
-            else if(res.getAssignedTo() == null)
-                return new ResponseEntity<TicketResponse>((TicketResponse) null, HttpStatusCode.valueOf(404));
-            return ResponseEntity.ok(res);
+          return ResponseEntity.ok(res);
         } catch (Exception e) {
             //User or ticket with those ids weren't found
             return new ResponseEntity<TicketResponse>((TicketResponse) null, HttpStatusCode.valueOf(404));
         }
     }
 
+    @PreAuthorize("hasRole('sd_agent')")
     @PostMapping("/agentfilter")
     public ResponseEntity<List<TicketResponse>> getFilteredAssignedTicketsForAgent(
             @RequestBody FilterRequest request,
