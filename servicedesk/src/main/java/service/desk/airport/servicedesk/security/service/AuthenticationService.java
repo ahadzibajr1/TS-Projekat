@@ -146,4 +146,20 @@ public class AuthenticationService {
 
         return null;
     }
+
+    public boolean compareHash(String providedPassword, String email) {
+        UserDetails userDetails = userRepository.findByEmail(email).orElseThrow();
+
+        return providedPassword.equals(userDetails.getPassword());
+    }
+
+    public String getHash(String password) {
+        return passwordEncoder.encode(password);
+    }
+
+    public void changePassword(String email, String newPassword) {
+        var user = userRepository.findByEmail(email).orElseThrow();
+        user.setPassword(getHash(newPassword));
+        userRepository.save(user);
+    }
 }

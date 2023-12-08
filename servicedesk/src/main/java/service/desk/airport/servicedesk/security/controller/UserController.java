@@ -1,21 +1,31 @@
 package service.desk.airport.servicedesk.security.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import service.desk.airport.servicedesk.dto.ticket.TicketResponse;
 import service.desk.airport.servicedesk.security.dao.UserRepository;
+import service.desk.airport.servicedesk.security.dto.ChangePasswordRequest;
 import service.desk.airport.servicedesk.security.entity.Department;
 import service.desk.airport.servicedesk.security.entity.Role;
 import service.desk.airport.servicedesk.security.entity.User;
+import service.desk.airport.servicedesk.security.service.AuthenticationService;
+import service.desk.airport.servicedesk.security.service.JwtService;
 
 @RestController
 @RequestMapping(path="/user")
 public class UserController {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AuthenticationService authenticationService;
+
+    @Autowired
+    private  JwtService jwtService;
 
     @PostMapping(path="/add")
     public @ResponseBody
@@ -29,6 +39,8 @@ public class UserController {
     public @ResponseBody Iterable<User> getAllUsers() {
         return userRepository.findAll();
     }
+
+
 
 
 
