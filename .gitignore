@@ -1,1 +1,3 @@
 ﻿servicedesk/src/main/resources/application-secret.properties
+frontend/yarn.lock
+frontend/package-lock.json

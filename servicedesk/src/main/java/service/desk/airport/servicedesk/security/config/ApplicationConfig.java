@@ -8,15 +8,23 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import service.desk.airport.servicedesk.security.service.CustomAuthenticationProvider;
 import service.desk.airport.servicedesk.security.service.UserDetailsServiceImpl;
 
 @Configuration
 public class ApplicationConfig {
+    /*
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }*/
+
+    @Bean
+    public CustomAuthenticationProvider customAuthenticationProvider() {
+        var authProvider = new CustomAuthenticationProvider(userDetailsService(),passwordEncoder());
         return authProvider;
     }
 
