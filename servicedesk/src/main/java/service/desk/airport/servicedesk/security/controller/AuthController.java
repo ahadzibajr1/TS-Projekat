@@ -21,6 +21,7 @@ import service.desk.airport.servicedesk.security.service.JwtService;
 
 import java.io.IOException;
 
+@CrossOrigin(origins = "*", methods = {RequestMethod.POST,RequestMethod.DELETE,RequestMethod.GET,RequestMethod.PUT})
 @RestController
 @RequestMapping(path="/auth")
 public class AuthController {

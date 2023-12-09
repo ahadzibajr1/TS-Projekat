@@ -14,6 +14,7 @@ import service.desk.airport.servicedesk.service.ManualService;
 import java.util.List;
 
 
+@CrossOrigin(origins = "*", methods = {RequestMethod.POST,RequestMethod.DELETE,RequestMethod.GET,RequestMethod.PUT})
 @RestController
 @RequestMapping(path="/manual")
 public class ManualController {

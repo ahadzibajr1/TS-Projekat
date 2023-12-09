@@ -12,6 +12,7 @@ import service.desk.airport.servicedesk.service.ForumTopicService;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*", methods = {RequestMethod.POST,RequestMethod.DELETE,RequestMethod.GET,RequestMethod.PUT})
 @RestController
 @RequestMapping(path="/forumtopic")
 public class ForumTopicController {

@@ -14,6 +14,7 @@ import service.desk.airport.servicedesk.service.TicketCommentService;
 import java.security.InvalidParameterException;
 import java.util.List;
 
+@CrossOrigin(origins = "*", methods = {RequestMethod.POST,RequestMethod.DELETE,RequestMethod.GET,RequestMethod.PUT})
 @RestController
 @RequestMapping(path="/ticket-comment")
 public class TicketCommentController {

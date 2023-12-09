@@ -12,6 +12,7 @@ import service.desk.airport.servicedesk.service.ForumPostService;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*", methods = {RequestMethod.POST,RequestMethod.DELETE,RequestMethod.GET,RequestMethod.PUT})
 @RestController
 @RequestMapping(path="/forumpost")
 public class ForumPostController {
@@ -25,6 +26,7 @@ public class ForumPostController {
     public ResponseEntity<List<ForumPostResponse>> getAllForumPosts() {
         return ResponseEntity.ok(forumPostService.getAllForumPosts());
     }
+
 
     @GetMapping("/get/{id}")
     public ResponseEntity<List<ForumPostResponse>> getForumPostsByTopicId(@PathVariable Integer id) {
