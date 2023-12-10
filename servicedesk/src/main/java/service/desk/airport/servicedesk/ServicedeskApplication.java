@@ -40,7 +40,7 @@ public class ServicedeskApplication implements CommandLineRunner {
 	{
 		deleteExpiredTokens();
 		//cleanup();
-		startingData();
+		//startingData();
 	}
 	private void cleanup() {
 		userRepository.deleteAll();
@@ -50,6 +50,7 @@ public class ServicedeskApplication implements CommandLineRunner {
 		tokenRepository.deleteInvalidTokens();
 	}
 
+	/*
 	private void startingData() {
 		Department department1 = departmentRepository.findById(1).orElseThrow();
 		Department department2 = departmentRepository.findById(2).orElseThrow();
@@ -74,7 +75,7 @@ public class ServicedeskApplication implements CommandLineRunner {
 
 		 user = new User("Agent","Agent","agent007@gmail.com", "$2a$12$jcsMd/V2TpGYWUq00oF0cuosaxD9oTeUjJXrs7vyTNDXUOnBmXHMi", department5, role2);
 		userRepository.save(user);
-	}
+	}*/
 
 
 }
