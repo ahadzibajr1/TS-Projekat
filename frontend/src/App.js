@@ -1,5 +1,6 @@
 import "./App.css";
 import Login from "./components/shared/login";
+import ChangePassword from "./components/shared/ChangePassword.js";
 import Home from "./components/shared/home";
 import PrivateRoute from "./components/shared/privateroute";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
@@ -99,6 +100,7 @@ function App() {
         </Route>
         <Route path="/login" element={<Login></Login>} />
         <Route path="*" element={<NotFound></NotFound>} />
+        <Route path="/change-password" element={<ChangePassword></ChangePassword>} />
       </Routes>
     </div>
   );

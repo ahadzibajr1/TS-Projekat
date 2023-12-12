@@ -23,6 +23,10 @@ function Header() {
   const navToHome = () => {
    navigate("/");
   };
+
+  const navToChangePassword = () => {
+    navigate("/change-password");
+   };
   
   const logout = () => {
     document.body.style.cursor='wait';
@@ -54,6 +58,7 @@ function Header() {
           </Typography>
            
         
+          <Button color="inherit" onClick={navToChangePassword} style={{textTransform: 'none',fontFamily:"Yantramanav",fontWight:"500",fontSize:"22px"}}>Račun</Button>
           <Button color="inherit" onClick={logout} style={{textTransform: 'none',fontFamily:"Yantramanav",fontWight:"500",fontSize:"22px"}}>Odjava</Button>
         </Toolbar>
       </Container>

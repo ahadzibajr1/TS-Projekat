@@ -31,6 +31,23 @@ class AuthService {
       });
   }
 
+  async changePassword(oldPassword, newPassword) {
+    return api
+      .put("/auth/change-password", {
+        oldPassword,
+        newPassword
+      })
+      .then(response => {
+        if (response.status===200) {
+          TokenService.removeUser();
+          console.log(response.data)
+        } else if (response.status===403){
+          throw new Error("Neispravni podaci.");
+        }
+        return response.data;
+      });
+  }
+
   logout() {
     TokenService.removeUser();
   }
