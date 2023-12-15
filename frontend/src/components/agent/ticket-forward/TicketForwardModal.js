@@ -96,7 +96,6 @@ export default function TicketForwardModal({ open, setOpen, ticketid }) {
         //i u tom slucaju se ne treba proslijediti zahtjev
         //Na frontu u ovom slucaju (400) prikazi error alert i onda refresh stranicu da se ponovo
         //nabave svjezi podaci o ticketu i prikazu
-        console.log(res);
         if (res.status == 400 || res.status == 404) {
           setSeverity("error");
           if (res.status == 404) {
@@ -109,7 +108,6 @@ export default function TicketForwardModal({ open, setOpen, ticketid }) {
           }
         } else {
           setAssignedTo(res.data.assignedTo);
-          console.log(assignedTo);
 
           //Ovdje sam izmijenila da se salje res.data.id, a ne da uzima iz state
           //iz razloga sto update state-a nije instantan

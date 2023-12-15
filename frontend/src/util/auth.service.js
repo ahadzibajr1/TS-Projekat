@@ -24,7 +24,6 @@ class AuthService {
       .then(response => {
         if (response.status===200) {
           TokenService.setUser(response.data);
-          console.log(response.data)
         }
 
         return response.data;
@@ -40,11 +39,37 @@ class AuthService {
       .then(response => {
         if (response.status===200) {
           TokenService.removeUser();
-          console.log(response.data)
         } else if (response.status===403){
           throw new Error("Neispravni podaci.");
         }
         return response.data;
+      });
+  }
+
+  async resetPassword(email) {
+    return api
+      .post("/auth/reset-password/request", {
+        email
+      })
+      .then(response => {
+        if (response.status!==200) {
+          throw new Error("Neispravni podaci.");
+        } 
+       return response.data;
+      });
+  }
+
+  async changePasswordWithToken(password, token) {
+    return api
+      .post("/auth/reset-password", {
+        password,
+        token
+      })
+      .then(response => {
+        if (response.status!==200) {
+          throw new Error("Neispravni podaci.");
+        } 
+       return response.data;
       });
   }
 
@@ -56,12 +81,15 @@ class AuthService {
 
   getCurrentUser() {
     var user = TokenService.getUser();
-    console.log(user);
     return user;
   }
 
   validateToken() {
     var token = TokenService.getLocalAccessToken();
+
+    if(!token) {
+      return false;
+    }
     return api
       .get("/auth/validate-token?token=" + token)
       .then(response => {

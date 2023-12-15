@@ -4,7 +4,7 @@ import {
   Paper,
   TextField,
   Typography,
-  Link,
+  
 } from "@mui/material";
 import React, { useState } from "react";
 import setBodyColor from "../../functions/setBodyColor";
@@ -17,7 +17,7 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import IconButton from "@mui/material/IconButton";
 import {useLocalState} from "../../util/useLocalState";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import { useEffect, useRef } from "react";
 
 import AuthService from "../../util/auth.service"
@@ -148,6 +148,7 @@ const Login = () => {
               />
               <span style={{display: showError ? "block" : "none",color:"#d32f2f",fontFamily: 'Yantramanav', marginTop:10,fontSize:'16px' }}>Neispravni pristupni podaci.</span>
             </FormControl>
+            <Link style={{ marginTop: 20}} to="/reset-password/request">Zaboravili ste lozinku?</Link>
             <div style={{ display: "flex", justifyContent: "flex-end", padding:0, margin:0 }}>
               <Button
                 type="submit"

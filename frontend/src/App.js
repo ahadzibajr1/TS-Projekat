@@ -19,6 +19,7 @@ import ForumList from "./components/shared/forum/ForumList";
 import ForumCreateEdit from "./components/shared/forum/ForumCreate";
 import ForumPostList from "./components/shared/forum/ForumPostList";
 import authService from "./util/auth.service";
+import ResetPassword from "./components/shared/ResetPassword.js"
 
 function App() {
   const navigate = useNavigate();
@@ -26,7 +27,6 @@ function App() {
 
   const validateToken = async()=> {
     var valid = await authService.validateToken();
-    console.log(valid)
     if(!valid) {
       console.log("invalid token")
       navigate("/login");
@@ -34,7 +34,7 @@ function App() {
   }
 
   useEffect(() => {
-    if(location.pathname != "/login") {
+    if(location.pathname != "/login" && !location.pathname.includes("/reset-password")) {
       validateToken();
     }
   }, [location]);  
@@ -101,6 +101,9 @@ function App() {
         <Route path="/login" element={<Login></Login>} />
         <Route path="*" element={<NotFound></NotFound>} />
         <Route path="/change-password" element={<ChangePassword></ChangePassword>} />
+        <Route path="/reset-password/request" element={<ResetPassword></ResetPassword>} />
+        <Route path="/reset-password" element={<ChangePassword></ChangePassword>} />
+
       </Routes>
     </div>
   );

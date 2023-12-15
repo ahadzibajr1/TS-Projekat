@@ -13,11 +13,9 @@ function Menu() {
 
   const showLog = () => {
     navigate("/ticket-list");
-    //console.log("nesto")
   };
   const showManual = () => {
     navigate("/manual-list");
-    //console.log("nesto")
   };
 
   const showReportList = () => {

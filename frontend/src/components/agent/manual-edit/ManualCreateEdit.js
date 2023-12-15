@@ -67,10 +67,6 @@ function ManualCreateEdit() {
     },[])
 
     const handleSubmit = ()=> {
-      console.log(manual.title==null)
-      console.log(manual)
-      console.log(manual.category==null)
-      console.log(manual.title.trim().length==0)
       if(manual.title==null || manual.title.trim().length==0 || manual.category==null) {
         setToast({ ...toast, open: true,msg: "Unesite vrijednosti u sva obavezna polja!" });
         setTitleError(true)
@@ -97,7 +93,6 @@ function ManualCreateEdit() {
 
         if(res.status==200) {
           navigate('/manual?id=' + res.data.id)
-          console.log(res.data)
         } else {
           setToast({ ...toast, open:true,msg: "Došlo je do greške." });
         }

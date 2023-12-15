@@ -126,7 +126,6 @@ function ReportCreate() {
         report.code = ticket.code
         report.priorityLevel = ticket.priorityLevel
         report.raisedById = ticket.createdBy.id
-        console.log(report)
 
         document.body.style.cursor = "wait";
 

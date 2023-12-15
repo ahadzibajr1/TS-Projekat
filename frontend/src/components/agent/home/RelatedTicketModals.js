@@ -90,16 +90,9 @@ export default function RelatedTicketsBind({ addRelatedTicket,open, setOpen, cur
   };
 
   function FetchTickets() {
-    // console.log(currId)
 
     setCircle(30)
-    /*api.get("/ticket/related/" + relatedId).then(x => {
-      api.post("/ticket/idarray", {"ids": x.data.relatedTicketIds}).then(x2 => {
-        setItems(x2.data);
-        setCircle(0)
-        console.log(items[0])
-      })
-    })*/
+    
 
     api.get("/ticket/code/" + code).then(x => {
       if(x.status == 200)
@@ -112,7 +105,6 @@ export default function RelatedTicketsBind({ addRelatedTicket,open, setOpen, cur
   function BindTicket() {
     setSuccess(false)
     setCircle(30)
-    // console.log("/ticket/related/" + currId + "/" + relatedId)
     api.post("/ticket/related/" + currId + "/" + relatedId).then(x => {
       if(x.status==200) {
       addRelatedTicket(x.data)

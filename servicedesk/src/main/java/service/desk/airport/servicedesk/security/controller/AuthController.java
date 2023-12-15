@@ -11,13 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import service.desk.airport.servicedesk.security.dao.UserRepository;
-import service.desk.airport.servicedesk.security.dto.AuthCredentials;
-import service.desk.airport.servicedesk.security.dto.AuthResponse;
-import service.desk.airport.servicedesk.security.dto.ChangePasswordRequest;
-import service.desk.airport.servicedesk.security.dto.RegisterRequest;
-import service.desk.airport.servicedesk.security.entity.User;
+import service.desk.airport.servicedesk.security.dto.*;
 import service.desk.airport.servicedesk.security.service.AuthenticationService;
 import service.desk.airport.servicedesk.security.service.JwtService;
+import service.desk.airport.servicedesk.security.service.PasswordResetTokenService;
 
 import java.io.IOException;
 
@@ -34,6 +31,9 @@ public class AuthController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordResetTokenService passwordResetTokenService;
 
     public AuthController(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
@@ -90,6 +90,41 @@ public class AuthController {
             return (ResponseEntity<String>) ResponseEntity
                     .status(HttpStatus.FORBIDDEN)
                     .body("You shall not pass!");
+        }
+    }
+
+    @PostMapping("/reset-password/request")
+    public ResponseEntity<String> resetPasswordRequest(@RequestBody ResetPasswordRequest request) {
+
+        try {
+            passwordResetTokenService.resetPassword(request.getEmail());
+        } catch (Exception e) {
+            return (ResponseEntity<String>) ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("User with this email does not exist!");
+        }
+
+
+        return (ResponseEntity<String>) ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Email with reset url sent");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordWithTokenRequest request) {
+        String email = passwordResetTokenService.validatePasswordResetToken(request.getToken());
+
+
+        if(email!=null) {
+            authenticationService.changePassword(email, request.getPassword());
+
+            return (ResponseEntity<String>) ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body("Password successfully changed!");
+        } else {
+            return (ResponseEntity<String>) ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Invalid or expired token!");
         }
     }
 

@@ -2,9 +2,9 @@ import {
     Button,
     Grid,
     Paper,
-    TextField,
-    Typography,
-    Link,
+    Snackbar,
+    Alert,
+    selectClasses
   } from "@mui/material";
   import React, { useState } from "react";
   import setBodyColor from "../../functions/setBodyColor";
@@ -56,20 +56,29 @@ import {
     const [passwordOld, setPasswordOld] = useState("");
     const [passwordNew, setPasswordNew] = useState("");
     const [showError,setShowError] = useState(false);
+    const [resetPassword,setResetPassword] = useState(true);
+    const [token, setToken] = useState("");
+    const [alert, setAlert] = useState(false);
     
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
   
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
       event.preventDefault();
       document.body.style.cursor='wait';
+      if(!resetPassword) {
       const reqBody = {
         oldpassword: passwordOld,
         newpassword: passwordNew
       }
   
       AuthService.changePassword(passwordOld,passwordNew).then(
-        () => {
+        async() => {
           document.body.style.cursor='default';
           setShowError(false);
+          setAlert(true);
+          await sleep(3000);
           navigate("/login")
         },
         error => {
@@ -77,13 +86,57 @@ import {
           navigate("/change-password")
           setShowError(true);
         }
-      )
-  
+      ) } else {
+        AuthService.changePasswordWithToken(passwordNew,token).then(
+          async () => {
+            document.body.style.cursor='default';
+            setShowError(false);
+            setAlert(true);
+            await sleep(3000);
+            navigate("/login")
+          },
+          error => {
+            document.body.style.cursor='default';
+            setShowError(true);
+          }
+        )
+      }
+   
     };
   
+    useEffect(() => {
+      const getTokenFromUrl = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        if (!token) {
+          setResetPassword(false);
+        } else {
+          setToken(token);
+        }
+      };
+  
+      getTokenFromUrl();
+    }, []);
     
+    const handleCloseAlert = () => {
+      setAlert(false);
+    };
   
     return (
+      <>
+      <Snackbar
+        open={alert}
+        autoHideDuration={3000}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        onClose={handleCloseAlert}
+      >
+        <Alert sx={{ width: "100%" }} severity={"success"}>
+          Uspješno ste izmijenili lozinku.
+        </Alert>
+      </Snackbar>
       <div>
         <div
           style={{
@@ -117,6 +170,7 @@ import {
             </div>
 
             <form onSubmit={handleSubmit}>
+             { resetPassword ? <></> : 
             <FormControl style={{margin:0,marginTop:8}} fullWidth variant="outlined">
                 <InputLabel>Stara Lozinka</InputLabel>
                 <OutlinedInput
@@ -140,7 +194,7 @@ import {
                 />
                 <span style={{display: showError ? "block" : "none",color:"#d32f2f",fontFamily: 'Yantramanav', marginTop:10,fontSize:'16px' }}>Neispravni podaci.</span>
               </FormControl>
-  
+              }
               <FormControl style={{margin:0,marginTop:8}} fullWidth variant="outlined">
                 <InputLabel>Nova Lozinka</InputLabel>
                 <OutlinedInput
@@ -162,6 +216,7 @@ import {
                   label="Nova Lozinka"
                   onChange={(event) => setPasswordNew(event.target.value)}
                 />
+                 <span style={{display: showError ? "block" : "none",color:"#d32f2f",fontFamily: 'Yantramanav', marginTop:10,fontSize:'16px' }}>Neispravan ili istekao link.</span>
               </FormControl>
               <div style={{ display: "flex", justifyContent: "flex-end", padding:0, margin:0 }}>
                 <Button
@@ -179,6 +234,7 @@ import {
           </Paper>
         </Grid>
       </div>
+      </>
     );
   };
   
